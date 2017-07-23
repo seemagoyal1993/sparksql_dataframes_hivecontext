@@ -49,7 +49,7 @@ val sqlContext = new org.apache.spark.sql.hive.HiveContext(sc)
    val logg = sc.textFile(args(0))
  
  // The schema is encoded in a string
- val schemaString = "gtp_start_date gtp_session_id t_session_id event_tm request_id uid host_name uri_path uri_params referer_scheme referer_hostname referer_uri_path referer_uri_params user_agent content_type content_length response_code http_method http_body cookie"
+ val schemaString = "start_date session_id " //sample schema string wd 20 headers
  // Generate the schema based on the string of schema
  val schema =StructType(
  schemaString.split(" ").map(fieldName=>StructField(fieldName, StringType, true)))
@@ -98,7 +98,7 @@ t2.write.format("orcl")text("/user/cloudera")*/
 
 sqlContext.sql("CREATE EXTERNAL TABLE IF NOT EXISTS DEMO1(gtp_session_id STRING,t_session_id STRING,event_tm STRING,request_id STRING,uid STRING,host_name STRING,uri_path STRING,uri_params STRING,referer_scheme STRING,referer_hostname STRING,referer_uri_path STRING,referer_uri_params STRING,user_agent STRING, content_type STRING, content_length STRING, response_code STRING,http_method STRING, http_body STRING, cookie STRING) PARTITIONED BY(gtp_start_date STRING) CLUSTERED BY (http_method) into 4 buckets row format delimited fields terminated by '\n' LOCATION '/user/cloudera/ext_tables' ")
 val n=sqlContext.sql("SELECT * FROM MAIN1")
-n.write.partitionBy("gtp_start_date").insertInto("DEMO1")
+n.write.partitionBy("start_date").insertInto("DEMO1")
  //bucketing : Tables/Partitions can be further subdivided into Clusters or Buckets.
 //Data in each partition may in turn be divided into Buckets based on the value of a hash function of some column of the Table.
   
